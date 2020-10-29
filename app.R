@@ -21,38 +21,38 @@ ui <- fluidPage(
     # Application title
     titlePanel("Choose Your Drink!"),
 
-
-    checkboxGroupInput("checkGroup",
-                       h3("Category of Cocktail"),
-                       choices = categoryops
+fluidRow(
+    column(
+        width = 3,
+        checkboxGroupInput("checkGroup",
+                           h3("Category of Cocktail"),
+                           choices = categoryops
+        ),
+        
+        h3("Choose your ingredients of interest"),
+        # Sidebar with a slider input for number of bins
+        selectizeInput(
+            'Ingredients', label = "Ingredients", choices = ingredients,
+            options = list(create = TRUE)
+        )
     ),
-
-    h3("Choose your ingredients of interest"),
-    # Sidebar with a slider input for number of bins
-    selectizeInput(
-        'Ingredients', label = "Ingredients", choices = ingredients,
-        options = list(create = TRUE)
-    ),
-fluidPage(DTOutput('tbl'))
-)
-
-
-
-
-
-
-
+    column(
+        width =9,
+        tableOutput('tbl')
+    )
+))
 
 
 # Define server logic
 server = function(input, output) {
-    recipe <- reactive({
-        req(input$checkGroup)
-        cocktails %>% group_by(!!(input$checkGroup)) %>% select(drink, ingredient, measure) %>% summarise(recipe = n())
-    })
+
     # Headcount
     output$tbl <- renderTable({
-        recipe()
+            cocktails %>% 
+            filter(category %in% (input$checkGroup)) %>% 
+            select(drink, ingredient, measure)
+        #%>% 
+            # summarise(recipe = n())
     })
     
 }
