@@ -9,10 +9,12 @@
 
 library(shiny)
 library(DT)
+library(dplyr)
 
 #Put data in
 cocktails <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-05-26/cocktails.csv')
 ingredients<-unique(cocktails$ingredient)
+categoryops<-unique(cocktails$category)
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
@@ -22,17 +24,7 @@ ui <- fluidPage(
 
     checkboxGroupInput("checkGroup",
                        h3("Category of Cocktail"),
-                       choices = list("Cocktail" = 1,
-                                      "Shot" = 2,
-                                      "Beer" = 3,
-                                      "Milk / Float / Shake" = 4,
-                                      "Ordinary Drink" = 5,
-                                      "Homemade Liqueur" = 6,
-                                      "Punch / Party Drink" = 7,
-                                      "Coffee / Tea" = 8,
-                                      "Soft Drink / Soda" = 9,
-                                      "Cocoa" = 10,
-                                      "Other/Unknown" = 11)
+                       choices = categoryops
     ),
 
     h3("Choose your ingredients of interest"),
@@ -54,9 +46,15 @@ fluidPage(DTOutput('tbl'))
 
 # Define server logic
 server = function(input, output) {
-    output$tbl = renderDT(
-        iris, options = list(lengthChange = FALSE)
-    )
+    recipe <- reactive({
+        req(input$checkGroup)
+        cocktails %>% group_by(!!(input$checkGroup)) %>% select(drink, ingredient, measure) %>% summarise(recipe = n())
+    })
+    # Headcount
+    output$tbl <- renderTable({
+        recipe()
+    })
+    
 }
 
 
