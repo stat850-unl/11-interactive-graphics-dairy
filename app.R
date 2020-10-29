@@ -8,6 +8,7 @@
 #
 
 library(shiny)
+library(DT)
 
 #Put data in
 cocktails <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-05-26/cocktails.csv')
@@ -39,17 +40,24 @@ ui <- fluidPage(
     selectizeInput(
         'Ingredients', label = "Ingredients", choices = ingredients,
         options = list(create = TRUE)
-    )
+    ),
+fluidPage(DTOutput('tbl'))
 )
 
 
 
+
+
+
+
+
+
 # Define server logic
-server <- function(input, output, session) {
-
-        
-    }
-
+server = function(input, output) {
+    output$tbl = renderDT(
+        iris, options = list(lengthChange = FALSE)
+    )
+}
 
 
 # Run the application
