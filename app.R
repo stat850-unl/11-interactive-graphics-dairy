@@ -37,7 +37,7 @@ ui <- fluidPage(
     h3("Choose your ingredients of interest"),
     # Sidebar with a slider input for number of bins
     selectizeInput(
-        'Ingredients', label = NULL, choices = ingredients,
+        'Ingredients', label = "Ingredients", choices = ingredients,
         options = list(create = TRUE)
     )
 )
@@ -45,9 +45,11 @@ ui <- fluidPage(
 
 
 # Define server logic
-server <- function(input, output) {
+server <- function(input, output, session) {
 
-}
+        
+    }
+
 
 
 # Run the application
