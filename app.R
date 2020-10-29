@@ -32,6 +32,10 @@ ui <- fluidPage(
     )
 )
 
+#Put data in
+cocktails <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-05-26/cocktails.csv')
+unique(cocktails$ingredient)
+
 # Define server logic required to draw a histogram
 server <- function(input, output) {
 
