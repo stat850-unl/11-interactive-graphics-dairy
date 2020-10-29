@@ -18,8 +18,24 @@ ui <- fluidPage(
     # Application title
     titlePanel("Choose Your Drink!"),
 
+
+    checkboxGroupInput("checkGroup",
+                       h3("Category of Cocktail"),
+                       choices = list("Cocktail" = 1,
+                                      "Shot" = 2,
+                                      "Beer" = 3,
+                                      "Milk / Float / Shake" = 4,
+                                      "Ordinary Drink" = 5,
+                                      "Homemade Liqueur" = 6,
+                                      "Punch / Party Drink" = 7,
+                                      "Coffee / Tea" = 8,
+                                      "Soft Drink / Soda" = 9,
+                                      "Cocoa" = 10,
+                                      "Other/Unknown" = 11)
+    ),
+
     h3("Choose your ingredients of interest"),
-    # Sidebar with a slider input for number of bins 
+    # Sidebar with a slider input for number of bins
     selectizeInput(
         'Ingredients', label = NULL, choices = ingredients,
         options = list(create = TRUE)
@@ -28,11 +44,11 @@ ui <- fluidPage(
 
 
 
-# Define server logic 
+# Define server logic
 server <- function(input, output) {
 
 }
 
 
-# Run the application 
+# Run the application
 shinyApp(ui = ui, server = server)
