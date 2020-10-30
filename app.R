@@ -26,7 +26,7 @@ ui <- fluidPage(
     # Sidebar layout with input and output definitions ----
     sidebarLayout(
         
-        # Sidebar panel for inputs ----
+        # Sidebar panel for inputs 
         sidebarPanel(
             
             # Inputs ----
@@ -36,7 +36,7 @@ ui <- fluidPage(
                                choices = categoryops
             ),
             
-            # br() element to introduce extra vertical spacing ----
+            # br() element to introduce extra vertical spacing 
             br(),
             
             #Search by Ingredient
@@ -49,10 +49,10 @@ ui <- fluidPage(
             
         ),
         
-        # Main panel for displaying outputs ----
+        # Main panel for displaying outputs 
         mainPanel(
             
-            # Output: Tabset w/ plot, summary, and table ----
+            # Output: Tabset w/ plot, summary, and table 
             tabsetPanel(type = "tabs",
                         tabPanel("Photos", DT::dataTableOutput('mytable')),
                         tabPanel("Custom Recipe Book", tableOutput("tbl"))
@@ -65,17 +65,19 @@ ui <- fluidPage(
 
 # Define server logic
 server = function(input, output) {
-    # Make reactive set because renderDataTable got mad without it but I need it to render html
+    # Make reactive dataset because renderDataTable got mad without it in a reactive statement but I need it to render html
     dat <-  reactive({cocktails %>% 
             dplyr::filter(category %in% input$checkGroup) %>% 
             select(drink,url)
     })
     
+    #Make table for photos
     output$mytable <- DT::renderDataTable({
         
         DT::datatable(dat(), escape = FALSE)
     })
     
+    #Make table for recipes
     output$tbl <- renderTable({
         cocktails %>% 
             filter(category %in% (input$checkGroup)) %>% 
