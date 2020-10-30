@@ -67,8 +67,8 @@ ui <- fluidPage(
 server = function(input, output) {
     # Make reactive dataset because renderDataTable got mad without it in a reactive statement but I need it to render html
     dat <-  reactive({cocktails %>% 
-            dplyr::filter(category %in% input$checkGroup) %>% 
-            select(drink,url)
+            dplyr::filter(category %in% input$checkGroup & ingredient %in%input$Ingredients) %>% 
+            select(drink,url) %>% distinct(drink,url)
     })
     
     #Make table for photos
