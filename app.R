@@ -10,6 +10,7 @@
 library(shiny)
 library(DT)
 library(dplyr)
+library(ggplot2)
 
 #Put data in
 cocktails <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-05-26/cocktails.csv')
@@ -54,6 +55,7 @@ ui <- fluidPage(
 
             # Output: Tabset w/ plot, summary, and table
             tabsetPanel(type = "tabs",
+                        tabPanel("Freqency of Ingredients", plotOutput("plot")),
                         tabPanel("Photos", DT::dataTableOutput('mytable')),
                         tabPanel("Custom Recipe Book", tableOutput("tbl"))
             )
@@ -71,6 +73,22 @@ server = function(input, output) {
             select(drink,url) %>% distinct(drink,url)
     })
 
+<<<<<<< HEAD
+=======
+    dat2 <-  reactive({cocktails %>%
+            dplyr::filter(category %in% input$checkGroup) %>%
+            select(drink,ingredient,ingredient_number)%>%
+            count(ingredient) %>%
+            mutate(freq = n/sum(n))
+    })
+
+    #Make graph for ingredient frequency
+    output$plot <- renderPlot({
+        ggplot(dat2(),aes(x=ingredient,y=freq))+geom_point(colour='red') +coord_flip() +theme(axis.text.x = element_text(vjust = 0.5, hjust=1))
+
+        })
+
+>>>>>>> d5c3a946b8c3555c7f1f0be2724d4668b23d14ff
     #Make table for photos
     output$mytable <- DT::renderDataTable({
 
