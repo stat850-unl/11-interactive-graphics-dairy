@@ -57,7 +57,7 @@ ui <- fluidPage(
             tabsetPanel(type = "tabs",
                         tabPanel("Freqency of Ingredients", plotOutput("plot")),
                         tabPanel("Photos", DT::dataTableOutput('mytable')),
-                        tabPanel("Custom Recipe Book", tableOutput("tbl"))
+                        tabPanel("Custom Recipe Book", DT::dataTableOutput("tbl"))
             )
 
         )
@@ -93,9 +93,11 @@ server = function(input, output) {
     })
 
     #Make table for recipes
-    output$tbl <- renderTable({
+    output$tbl <- DT::renderDataTable({
+        s = input$mytable_rows_selected
+        s2<-s %>% select(drink)
         cocktails %>%
-            filter(category %in% (input$checkGroup)) %>%
+            dplyr::filter(drink %in% s2) %>%
             select(drink, ingredient, measure)
     })
 }
