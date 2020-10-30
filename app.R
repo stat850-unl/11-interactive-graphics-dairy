@@ -15,48 +15,73 @@ library(dplyr)
 cocktails <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-05-26/cocktails.csv')
 ingredients<-unique(cocktails$ingredient)
 categoryops<-unique(cocktails$category)
-# Define UI for application that draws a histogram
+cocktails$url <- paste0("<img src='",cocktails$drink_thumb,"'height=100>",cocktails$drink_thumb,"</img>")
+
+# Define UI for application 
 ui <- fluidPage(
 
-    # Application title
+     # Application title
     titlePanel("Choose Your Drink!"),
 
-fluidRow(
-    column(
-        width = 3,
-        checkboxGroupInput("checkGroup",
-                           h3("Category of Cocktail"),
-                           choices = categoryops
+    # Sidebar layout with input and output definitions ----
+    sidebarLayout(
+        
+        # Sidebar panel for inputs ----
+        sidebarPanel(
+            
+            # Inputs ----
+            #Checkboxes for category
+            checkboxGroupInput("checkGroup",
+                               h3("Category of Cocktail"),
+                               choices = categoryops
+            ),
+            
+            # br() element to introduce extra vertical spacing ----
+            br(),
+            
+            #Search by Ingredient
+            h3("Choose your ingredients of interest"),
+            # Sidebar with a slider input for number of bins
+            selectizeInput(
+                'Ingredients', label = "Scroll or Type Entry", choices = ingredients,
+                options = list(create = TRUE)
+            )
+            
         ),
         
-        h3("Choose your ingredients of interest"),
-        # Sidebar with a slider input for number of bins
-        selectizeInput(
-            'Ingredients', label = "Ingredients", choices = ingredients,
-            options = list(create = TRUE)
+        # Main panel for displaying outputs ----
+        mainPanel(
+            
+            # Output: Tabset w/ plot, summary, and table ----
+            tabsetPanel(type = "tabs",
+                        tabPanel("Photos", DT::dataTableOutput('mytable')),
+                        tabPanel("Custom Recipe Book", tableOutput("tbl"))
+            )
+            
         )
-    ),
-    column(
-        width =9,
-        tableOutput('tbl')
     )
-))
+)
 
 
 # Define server logic
 server = function(input, output) {
-
-    # Headcount
-    output$tbl <- renderTable({
-            cocktails %>% 
-            filter(category %in% (input$checkGroup)) %>% 
-            select(drink, ingredient, measure)
-        #%>% 
-            # summarise(recipe = n())
+    # Make reactive set because renderDataTable got mad without it but I need it to render html
+    dat <-  reactive({cocktails %>% 
+            dplyr::filter(category %in% input$checkGroup) %>% 
+            select(drink,url)
     })
     
+    output$mytable <- DT::renderDataTable({
+        
+        DT::datatable(dat(), escape = FALSE)
+    })
+    
+    output$tbl <- renderTable({
+        cocktails %>% 
+            filter(category %in% (input$checkGroup)) %>% 
+            select(drink, ingredient, measure)
+    })
 }
-
 
 # Run the application
 shinyApp(ui = ui, server = server)
