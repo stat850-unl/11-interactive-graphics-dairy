@@ -45,7 +45,7 @@ ui <- fluidPage(
             # Sidebar with a slider input for number of bins
             selectizeInput(
                 'Ingredients', label = "Scroll or Type Entry", choices = ingredients,
-                options = list(create = TRUE)
+                options = list(create = TRUE), multiple = T
             )
 
         ),
