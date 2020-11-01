@@ -95,7 +95,7 @@ server = function(input, output) {
     #Make table for recipes
     output$tbl <- DT::renderDataTable({
         s = input$mytable_rows_selected
-        s2<-s %>% select(drink)
+        s2 <- dat()$drink[s]
         cocktails %>%
             dplyr::filter(drink %in% s2) %>%
             select(drink, ingredient, measure)
