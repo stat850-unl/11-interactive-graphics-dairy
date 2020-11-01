@@ -16,7 +16,7 @@ library(ggplot2)
 cocktails <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-05-26/cocktails.csv')
 ingredients<-unique(cocktails$ingredient)
 categoryops<-unique(cocktails$category)
-cocktails$url <- paste0("<img src='",cocktails$drink_thumb,"'height=100>",cocktails$drink_thumb,"</img>")
+cocktails$url <- paste0("<img src='",cocktails$drink_thumb,"'height=100>",cocktails$name,"</img>")
 
 # Define UI for application
 ui <- fluidPage(
