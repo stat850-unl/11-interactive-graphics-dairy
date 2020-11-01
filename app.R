@@ -43,9 +43,10 @@ ui <- fluidPage(
             #Search by Ingredient
             h3("Choose your ingredients of interest"),
             # Sidebar with a slider input for number of bins
-            selectizeInput(
-                'Ingredients', label = "Scroll or Type Entry", choices = ingredients,
-                options = list(create = TRUE), multiple = T
+            selectInput(
+                "Ingredients", label = "Scroll or Type Entry", choices = ingredients,
+                #options = list(create = TRUE),
+                multiple = T
             )
 
         ),
@@ -56,9 +57,8 @@ ui <- fluidPage(
             # Output: Tabset w/ plot, summary, and table
             tabsetPanel(type = "tabs",
                         tabPanel("Freqency of Ingredients", plotOutput("plot")),
-                        tabPanel("Photos", DT::dataTableOutput('mytable')),
-                        tabPanel("Custom Recipe Book", DT::dataTableOutput("tbl"))
-            )
+                        tabPanel("Recipes", DT::dataTableOutput('mytable'), "Custom Recipe Book", DT::dataTableOutput("tbl"))
+                        )
 
         )
     )
@@ -67,24 +67,52 @@ ui <- fluidPage(
 
 # Define server logic
 server = function(input, output) {
+    # observe({
+    #     x <- input$checkGroup
+    #
+    #     # Can use character(0) to remove all choices
+    #     if (is.null(x))
+    #         x <- character(0)
+    #
+    #     # Can also set the label and select items
+    #     updateSelectInput(session, "Ingredients",
+    #                       label = paste("Select input label", length(x)),
+    #                       choices = x,
+    #                       selected = tail(x, 1)
+    #     )
+    # })
+
     # Make reactive dataset because renderDataTable got mad without it in a reactive statement but I need it to render html
-    dat <-  reactive({cocktails %>%
+    dat <-
+        reactive({cocktails %>%
             dplyr::filter(category %in% input$checkGroup & ingredient %in%input$Ingredients) %>%
             select(drink,url) %>% distinct(drink,url)
     })
 
-    dat2 <-  reactive({cocktails %>%
+    dat2 <-  reactive({
+        # This outputs instructions when conditions aren't met
+        validate(need(length(input$checkGroup) > 0, "Select a cocktail type"))
+
+        cocktails %>%
             dplyr::filter(category %in% input$checkGroup) %>%
-            select(drink,ingredient,ingredient_number)%>%
+            select(drink,ingredient,ingredient_number) %>%
             count(ingredient) %>%
-            mutate(freq = n/sum(n))
+            # mutate(freq = n/sum(n)) %>%
+            arrange(desc(n)) %>%
+            mutate(ingredient = factor(ingredient, levels = rev(ingredient))) %>%
+            filter(row_number() <= 15)
+    })
+    # #Make graph for ingredient frequency
+    output$plot <- renderPlot({
+        ggplot(dat2(),aes(x=ingredient,y=n)) +
+        ylab("Number of Recipes") +
+        xlab("") +
+        geom_col() +
+        coord_flip() +
+        theme(axis.text.x = element_text(vjust = 0.5, hjust=1)) +
+        ggtitle("Most Common Ingredients")
     })
 
-    #Make graph for ingredient frequency
-    output$plot <- renderPlot({
-        ggplot(dat2(),aes(x=ingredient,y=freq))+geom_point(colour='red') +coord_flip() +theme(axis.text.x = element_text(vjust = 0.5, hjust=1))
-
-        })
 
     #Make table for photos
     output$mytable <- DT::renderDataTable({
