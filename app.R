@@ -34,8 +34,7 @@ ui <- fluidPage(
             #Checkboxes for category
             checkboxGroupInput("checkGroup",
                                h3("Category of Cocktail"),
-                               choices = categoryops
-            ),
+                               choices = categoryops),
 
             # br() element to introduce extra vertical spacing
             br(),
@@ -68,7 +67,7 @@ ui <- fluidPage(
 # Define server logic
 server = function(input, output, session) {
      observe({
-         x <- input$checkboxGroup
+         x <- input$checkGroup
 
 # Adding session to server function removed ingredient options
 
