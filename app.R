@@ -73,8 +73,7 @@ server = function(input, output) {
             select(drink,url) %>% distinct(drink,url)
     })
 
-<<<<<<< HEAD
-=======
+
     dat2 <-  reactive({cocktails %>%
             dplyr::filter(category %in% input$checkGroup) %>%
             select(drink,ingredient,ingredient_number)%>%
@@ -88,7 +87,7 @@ server = function(input, output) {
 
         })
 
->>>>>>> d5c3a946b8c3555c7f1f0be2724d4668b23d14ff
+
     #Make table for photos
     output$mytable <- DT::renderDataTable({
 
